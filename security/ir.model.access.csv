@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_vat_return,l10n.ma.vat.return,model_l10n_ma_vat_return,,1,1,1,1
+access_vat_return_line,l10n.ma.vat.return.line,model_l10n_ma_vat_return_line,,1,1,1,1
+access_vat_deduction_line,l10n.ma.vat.deduction.line,model_l10n_ma_vat_deduction_line,,1,1,1,1
+access_vat_history,l10n.ma.vat.history,model_l10n_ma_vat_history,,1,1,1,1
