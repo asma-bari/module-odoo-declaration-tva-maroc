@@ -219,7 +219,7 @@ Le scénario de démonstration est le suivant :
 
 La liste des déclarations permet de consulter les déclarations de TVA créées ainsi que leur période, leur société et leur état.
 
-![Liste des déclarations](screenshots/liste_declarations.png)
+![Liste des déclarations](screenshots/liste_declaration.png)
 
 ---
 
@@ -311,7 +311,3 @@ Spécialité : Développement Logiciel et Applicatif (DLA)
 École Nationale des Sciences Appliquées d'Agadir (ENSA Agadir)
 
 ---
-
-# Licence
-
-Projet réalisé dans le cadre d'un stage académique.
