@@ -215,17 +215,75 @@ Le scénario de démonstration est le suivant :
 
 ---
 
-# Captures d'écran
+## Liste des déclarations
 
-Les captures suivantes seront ajoutées :
+La liste des déclarations permet de consulter les déclarations de TVA créées ainsi que leur période, leur société et leur état.
 
-- Tableau de bord
-- Formulaire de déclaration
-- Lignes TVA
-- Déductions
-- Historique
-- Export PDF
-- Export Excel
+![Liste des déclarations](screenshots/liste_declarations.png)
+
+---
+
+## Formulaire de déclaration
+
+Le formulaire permet de créer et de gérer une déclaration de TVA en renseignant notamment la société, la période fiscale, le régime et la périodicité.
+
+![Formulaire de déclaration](screenshots/formulaire_declaration.png)
+
+---
+
+## Documents comptables
+
+Cette interface permet de consulter les documents comptables pris en compte lors de la préparation de la déclaration.
+
+![Documents comptables](screenshots/documents.png)
+
+---
+
+## Lignes de TVA
+
+Les lignes de TVA générées automatiquement à partir des factures sont affichées dans cette interface.
+
+![Lignes TVA](screenshots/lignes_tva.png)
+
+---
+
+## Déductions
+
+Le module génère automatiquement le relevé des déductions à partir des factures fournisseurs concernées.
+
+![Déductions](screenshots/deductions.png)
+
+---
+
+## Totaux de TVA
+
+Les montants calculés automatiquement sont présentés dans la déclaration : TVA collectée, TVA déductible, crédit de TVA et TVA nette à payer.
+
+![Totaux TVA](screenshots/totaux_tva.png)
+
+---
+
+## Historique
+
+L'historique permet de suivre les différentes opérations effectuées sur une déclaration, avec l'utilisateur, la date et l'action réalisée.
+
+![Historique](screenshots/historique.png)
+
+---
+
+## Export PDF
+
+Le module permet de générer un document PDF contenant les informations et les résultats de la déclaration de TVA.
+
+![Export PDF](screenshots/pdf_tva.png)
+
+---
+
+## Export XML
+
+Le module permet également de générer un fichier XML contenant les données de la déclaration.
+
+![Export XML](screenshots/xml.png)
 
 ---
 
