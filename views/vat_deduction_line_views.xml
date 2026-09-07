@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+ 
+   
+    <record id="view_vat_deduction_line_tree" model="ir.ui.view">
+        <field name="name">l10n.ma.vat.deduction.line.tree</field>
+        <field name="model">l10n.ma.vat.deduction.line</field>
+        <field name="arch" type="xml">
+
+            <list string="Relevé des déductions TVA">
+                <field name="move_id"/>
+                <field name="invoice_number"/>
+                <field name="partner_id"/>
+                <field name="invoice_date"/>
+                <field name="payment_date"/>
+                <field name="amount_untaxed"/>
+                <field name="tax_amount"/>
+                <field name="total_amount"/>
+                <field name="deductible"/>
+
+            </list>
+
+        </field>
+    </record>
+
+    <record id="view_vat_deduction_line_form" model="ir.ui.view">
+        <field name="name">l10n.ma.vat.deduction.line.form</field>
+        <field name="model">l10n.ma.vat.deduction.line</field>
+        <field name="arch" type="xml">
+
+            <form string="Ligne de déduction TVA">
+
+                <sheet>
+
+                    <group>
+
+                        <group>
+
+                            <field name="vat_return_id"/>
+                            <field name="move_id"/>
+                            <field name="partner_id"/>
+
+                        </group>
+
+                        <group>
+
+                            <field name="invoice_number"/>
+                            <field name="invoice_date"/>
+                            <field name="payment_date"/>
+
+                        </group>
+
+                    </group>
+
+                    <group string="Informations fiscales">
+
+                        <group>
+
+                            <field name="supplier_ice"/>
+                            <field name="supplier_if"/>
+                            <field name="supplier_rc"/>
+
+                        </group>
+
+                    </group>
+
+                    <group string="Montants">
+
+                        <group>
+
+                            <field name="amount_untaxed"/>
+                            <field name="tax_amount"/>
+                            <field name="total_amount"/>
+
+                        </group>
+
+                    </group>
+
+                    <group string="Paiement">
+
+                        <group>
+
+                            <field name="payment_method"/>
+                            <field name="deductible"/>
+
+                        </group>
+
+                    </group>
+
+                    <group string="Observations">
+
+                        <field name="note"/>
+
+                    </group>
+
+                </sheet>
+
+            </form>
+
+        </field>
+    </record>
+
+    <record id="view_vat_deduction_line_search" model="ir.ui.view">
+        <field name="name">l10n.ma.vat.deduction.line.search</field>
+        <field name="model">l10n.ma.vat.deduction.line</field>
+        <field name="arch" type="xml">
+
+            <search>
+
+                <field name="invoice_number"/>
+                <field name="partner_id"/>
+                <field name="invoice_date"/>
+
+                <filter
+                    name="deductible"
+                    string="Déductible"
+                    domain="[('deductible','=',True)]"/>
+
+                <filter
+                    name="non_deductible"
+                    string="Non déductible"
+                    domain="[('deductible','=',False)]"/>
+
+            </search>
+
+        </field>
+    </record>
+
+    <record id="action_vat_deduction_line" model="ir.actions.act_window">
+
+        <field name="name">Relevé des déductions TVA</field>
+
+        <field name="res_model">l10n.ma.vat.deduction.line</field>
+
+        <field name="view_mode">list,form</field>
+
+    </record>
+
+</odoo>

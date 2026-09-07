@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_vat_return_line_tree" model="ir.ui.view">
+        <field name="name">l10n.ma.vat.return.line.tree</field>
+        <field name="model">l10n.ma.vat.return.line</field>
+        <field name="arch" type="xml">
+
+            <list string="Lignes de déclaration TVA">
+
+                <field name="sequence"/>
+                <field name="name"/>
+                <field name="line_type"/>
+                <field name="tax_rate"/>
+                <field name="base_amount"/>
+                <field name="vat_amount"/>
+
+            </list>
+
+        </field>
+    </record>
+
+    <record id="view_vat_return_line_form" model="ir.ui.view">
+        <field name="name">l10n.ma.vat.return.line.form</field>
+        <field name="model">l10n.ma.vat.return.line</field>
+        <field name="arch" type="xml">
+
+            <form string="Ligne de déclaration TVA">
+
+                <sheet>
+
+                    <group>
+
+                        <group>
+
+                            <field name="vat_return_id"/>
+                            <field name="sequence"/>
+                            <field name="name"/>
+
+                        </group>
+
+                        <group>
+
+                            <field name="line_type"/>
+                            <field name="tax_rate"/>
+
+                        </group>
+
+                    </group>
+
+                    <group string="Montants">
+
+                        <field name="base_amount"/>
+                        <field name="vat_amount"/>
+
+                    </group>
+
+                    <group string="Observations">
+
+                        <field name="note"/>
+
+                    </group>
+
+                </sheet>
+
+            </form>
+
+        </field>
+    </record>
+
+    <record id="view_vat_return_line_search" model="ir.ui.view">
+        <field name="name">l10n.ma.vat.return.line.search</field>
+        <field name="model">l10n.ma.vat.return.line</field>
+        <field name="arch" type="xml">
+
+            <search>
+
+                <field name="name"/>
+                <field name="line_type"/>
+                <field name="vat_return_id"/>
+
+                <separator/>
+
+                <filter
+                    name="sales"
+                    string="Ventes"
+                    domain="[('line_type','=','sale')]"/>
+
+                <filter
+                    name="purchases"
+                    string="Achats"
+                    domain="[('line_type','=','purchase')]"/>
+
+                <filter
+                    name="deductions"
+                    string="Déductions"
+                    domain="[('line_type','=','deduction')]"/>
+
+            </search>
+
+        </field>
+    </record>
+
+    <record id="action_vat_return_line" model="ir.actions.act_window">
+
+        <field name="name">Lignes de déclaration TVA</field>
+
+        <field name="res_model">l10n.ma.vat.return.line</field>
+
+        <field name="view_mode">list,form</field>
+
+        <field name="search_view_id" ref="view_vat_return_line_search"/>
+
+    </record>
+
+</odoo>

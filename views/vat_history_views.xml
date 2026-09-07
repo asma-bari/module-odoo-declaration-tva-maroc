@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_vat_history_tree" model="ir.ui.view">
+        <field name="name">l10n.ma.vat.history.tree</field>
+        <field name="model">l10n.ma.vat.history</field>
+        <field name="arch" type="xml">
+
+            <list string="Historique TVA">
+
+                <field name="action_date"/>
+                <field name="vat_return_id"/>
+                <field name="user_id"/>
+                <field name="action"/>
+                <field name="state"/>
+
+            </list>
+
+        </field>
+    </record>
+
+    <record id="view_vat_history_form" model="ir.ui.view">
+        <field name="name">l10n.ma.vat.history.form</field>
+        <field name="model">l10n.ma.vat.history</field>
+        <field name="arch" type="xml">
+
+            <form string="Historique TVA">
+
+                <sheet>
+
+                    <group>
+
+                        <group>
+
+                            <field name="vat_return_id"/>
+                            <field name="user_id"/>
+                            <field name="action"/>
+
+                        </group>
+
+                        <group>
+
+                            <field name="action_date"/>
+                            <field name="state"/>
+                            <field name="active"/>
+
+                        </group>
+
+                    </group>
+
+                    <group string="Description">
+
+                        <field name="description"/>
+
+                    </group>
+
+                    <group string="Adresse IP">
+
+                        <field name="ip_address"/>
+
+                    </group>
+
+                </sheet>
+
+            </form>
+
+        </field>
+    </record>
+
+    <record id="view_vat_history_search" model="ir.ui.view">
+        <field name="name">l10n.ma.vat.history.search</field>
+        <field name="model">l10n.ma.vat.history</field>
+        <field name="arch" type="xml">
+
+            <search>
+
+                <field name="vat_return_id"/>
+                <field name="user_id"/>
+                <field name="action"/>
+                <field name="state"/>
+
+                <filter
+                    name="draft"
+                    string="Brouillon"
+                    domain="[('state','=','draft')]"/>
+
+                <filter
+                    name="validated"
+                    string="Validée"
+                    domain="[('state','=','validated')]"/>
+
+                <filter
+                    name="submitted"
+                    string="Déposée"
+                    domain="[('state','=','submitted')]"/>
+
+            </search>
+
+        </field>
+    </record>
+
+    <record id="action_vat_history" model="ir.actions.act_window">
+
+        <field name="name">Historique TVA</field>
+
+        <field name="res_model">l10n.ma.vat.history</field>
+
+        <field name="view_mode">list,form</field>
+
+    </record>
+
+</odoo>

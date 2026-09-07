@@ -1,0 +1,215 @@
+\subsection{Vues et interfaces utilisateur}
+
+Les vues Odoo constituent l'interface utilisateur du module. Elles permettent aux utilisateurs de visualiser, saisir et gérer les déclarations TVA de manière intuitive.
+
+\subsubsection{Vue liste des déclarations}
+
+La vue liste permet de visualiser toutes les déclarations avec leurs informations clés : référence, société, période, régime, périodicité, TVA à payer et état. Cette vue offre des fonctionnalités de recherche, de filtrage et de regroupement.
+
+\begin{lstlisting}[language=xml, caption=Vue liste des déclarations TVA]
+<record id="view_vat_return_tree" model="ir.ui.view">
+    <field name="name">l10n.ma.vat.return.tree</field>
+    <field name="model">l10n.ma.vat.return</field>
+    <field name="arch" type="xml">
+        <list>
+            <field name="name"/>
+            <field name="company_id"/>
+            <field name="period_start"/>
+            <field name="period_end"/>
+            <field name="regime"/>
+            <field name="periodicity"/>
+            <field name="vat_due"/>
+            <field name="state"/>
+        </list>
+    </field>
+</record>
+\end{lstlisting}
+
+\screenshot{0.95}{listdeclaration.pnj.png}{Vue liste des déclarations TVA}
+
+\subsubsection{Vue formulaire de déclaration}
+
+La vue formulaire est l'interface principale de saisie et de consultation des déclarations. Elle est organisée en plusieurs onglets pour une navigation fluide :
+
+\begin{itemize}
+    \item \textbf{Totaux TVA} : Affichage des totaux calculés
+    \item \textbf{Lignes TVA} : Saisie et consultation des lignes détaillées
+    \item \textbf{Déductions} : Gestion du relevé de déductions
+    \item \textbf{Historique} : Traçabilité des actions
+    \item \textbf{Documents} : Gestion des fichiers générés
+    \item \textbf{Observations} : Notes et commentaires
+\end{itemize}
+
+\begin{lstlisting}[language=xml, caption=Vue formulaire de déclaration - Header]
+<record id="view_vat_return_form" model="ir.ui.view">
+    <field name="name">l10n.ma.vat.return.form</field>
+    <field name="model">l10n.ma.vat.return</field>
+    <field name="arch" type="xml">
+        <form>
+            <header>
+                <!-- Boutons d'action selon l'état -->
+                <button name="action_prepare" string="Préparer" type="object" 
+                        class="btn-primary" invisible="state != 'draft'"/>
+                <button name="action_check" string="Contrôler" type="object" 
+                        invisible="state != 'prepared'"/>
+                <button name="action_validate" string="Valider" type="object" 
+                        class="btn-success" invisible="state != 'checked'"/>
+                <button name="action_export_xml" string="Exporter XML" type="object" 
+                        class="btn-primary" invisible="state != 'validated'"/>
+                <button name="action_export_excel" string="Exporter Excel" type="object" 
+                        class="btn-secondary" invisible="state != 'validated'"/>
+                <button name="action_export_pdf" string="Exporter PDF" type="object" 
+                        class="btn-info" invisible="state != 'validated'"/>
+                <button name="action_submit" string="Déposer" type="object" 
+                        invisible="state != 'validated'"/>
+                <button name="action_cancel" string="Annuler" type="object" 
+                        invisible="state == 'cancel'"/>
+                <button name="action_reset_to_draft" string="Remettre en brouillon" type="object" 
+                        invisible="state == 'draft'"/>
+                <!-- Barre de statut -->
+                <field name="state" widget="statusbar" 
+                       statusbar_visible="draft,prepared,checked,validated,submitted,cancel"/>
+            </header>
+            <!-- Suite du formulaire -->
+        </form>
+    </field>
+</record>
+\end{lstlisting}
+
+\subsection{Fonctionnalités de génération des rapports}
+
+\subsubsection{Génération du fichier XML SIMPL}
+
+La génération du fichier XML est la fonctionnalité clé du module. Ce fichier, conforme au schéma XSD de la DGI, est le document à téléverser sur le portail SIMPL pour la télédéclaration. La méthode parcourt la déclaration et ses lignes associées pour construire un document XML structuré.
+
+\begin{lstlisting}[language=python, caption=Génération du fichier XML SIMPL]
+def action_export_xml(self):
+    """Génère le fichier XML conforme au schéma XSD de la DGI"""
+    self.ensure_one()
+    
+    root = ET.Element("vat_return")
+    
+    # 1. Informations générales
+    ET.SubElement(root, "reference").text = self.name or ""
+    ET.SubElement(root, "company").text = self.company_id.name or ""
+    ET.SubElement(root, "period_start").text = str(self.period_start or "")
+    ET.SubElement(root, "period_end").text = str(self.period_end or "")
+    ET.SubElement(root, "regime").text = self.regime or ""
+    ET.SubElement(root, "periodicity").text = self.periodicity or ""
+    ET.SubElement(root, "state").text = self.state or ""
+    
+    # 2. Totaux TVA
+    totals = ET.SubElement(root, "totals")
+    ET.SubElement(totals, "vat_collected").text = str(self.vat_collected)
+    ET.SubElement(totals, "vat_deductible").text = str(self.vat_deductible)
+    ET.SubElement(totals, "vat_credit").text = str(self.vat_credit)
+    ET.SubElement(totals, "vat_due").text = str(self.vat_due)
+    
+    # 3. Lignes TVA
+    lines = ET.SubElement(root, "lines")
+    for line in self.line_ids:
+        xml_line = ET.SubElement(lines, "line")
+        ET.SubElement(xml_line, "sequence").text = str(line.sequence)
+        ET.SubElement(xml_line, "name").text = line.name or ""
+        ET.SubElement(xml_line, "type").text = line.line_type or ""
+        ET.SubElement(xml_line, "tax_rate").text = str(line.tax_rate)
+        ET.SubElement(xml_line, "base_amount").text = str(line.base_amount)
+        ET.SubElement(xml_line, "vat_amount").text = str(line.vat_amount)
+    
+    # 4. Relevé de déductions
+    deductions = ET.SubElement(root, "deductions")
+    for deduction in self.deduction_line_ids:
+        xml_deduction = ET.SubElement(deductions, "deduction")
+        ET.SubElement(xml_deduction, "invoice_number").text = deduction.invoice_number or ""
+        ET.SubElement(xml_deduction, "supplier").text = deduction.partner_id.name or ""
+        ET.SubElement(xml_deduction, "invoice_date").text = str(deduction.invoice_date or "")
+        ET.SubElement(xml_deduction, "payment_date").text = str(deduction.payment_date or "")
+        ET.SubElement(xml_deduction, "amount_untaxed").text = str(deduction.amount_untaxed)
+        ET.SubElement(xml_deduction, "tax_amount").text = str(deduction.tax_amount)
+        ET.SubElement(xml_deduction, "total_amount").text = str(deduction.total_amount)
+        ET.SubElement(xml_deduction, "supplier_ice").text = deduction.supplier_ice or ""
+        ET.SubElement(xml_deduction, "supplier_if").text = deduction.supplier_if or ""
+        ET.SubElement(xml_deduction, "supplier_rc").text = deduction.supplier_rc or ""
+        ET.SubElement(xml_deduction, "payment_method").text = deduction.payment_method or ""
+    
+    # 5. Sauvegarde du fichier
+    xml_content = ET.tostring(root, encoding="utf-8", xml_declaration=True)
+    
+    self.write({
+        "xml_file": base64.b64encode(xml_content),
+        "xml_filename": f"{self.name}.xml",
+    })
+    
+    self._create_history("export_xml", "Fichier XML généré.")
+    return True
+\end{lstlisting}
+
+\screenshot{0.95}{xml.pnj.png}{Fichier XML généré selon le schéma SIMPL}
+
+\subsubsection{Génération du rapport PDF}
+
+Le rapport PDF récapitulatif reprend le format du formulaire DGI et permet une consultation facile des données de la déclaration.
+
+\screenshot{0.95}{pdf.pnj.png}{Rapport PDF récapitulatif}
+
+\subsubsection{Section Documents}
+
+La section Documents du formulaire permet de télécharger les fichiers générés (XML, Excel, PDF) après validation de la déclaration.
+
+\screenshot{0.95}{documents.pnj.png}{Formulaire - Section Documents générés}
+
+\subsection{Paramétrage fiscal}
+
+\subsubsection{Taux de TVA historisés}
+
+Les taux de TVA sont paramétrés avec des dates de validité, permettant une gestion automatique des changements de la loi de finances. Les taux historisés (20\%, 10\%, 7\%, 14\%) sont conservés pour les périodes transitoires et les régularisations.
+
+\begin{lstlisting}[language=xml, caption=Taux de TVA historisés]
+<odoo>
+    <data noupdate="1">
+        <!-- Taux 20% - Réforme 2026 -->
+        <record id="vat_tax_20" model="account.tax">
+            <field name="name">TVA 20%</field>
+            <field name="amount">20.0</field>
+            <field name="type_tax_use">sale</field>
+            <field name="tax_group_id" ref="account.tax_group_tva"/>
+            <field name="l10n_ma_tax_rate">20.0</field>
+            <field name="l10n_ma_valid_from">2026-01-01</field>
+            <field name="l10n_ma_valid_to">2099-12-31</field>
+        </record>
+        
+        <!-- Taux 10% - Réforme 2026 -->
+        <record id="vat_tax_10" model="account.tax">
+            <field name="name">TVA 10%</field>
+            <field name="amount">10.0</field>
+            <field name="type_tax_use">sale</field>
+            <field name="tax_group_id" ref="account.tax_group_tva"/>
+            <field name="l10n_ma_tax_rate">10.0</field>
+            <field name="l10n_ma_valid_from">2026-01-01</field>
+            <field name="l10n_ma_valid_to">2099-12-31</field>
+        </record>
+        
+        <!-- Taux 7% - Ancien taux (transition) -->
+        <record id="vat_tax_7" model="account.tax">
+            <field name="name">TVA 7%</field>
+            <field name="amount">7.0</field>
+            <field name="type_tax_use">sale</field>
+            <field name="tax_group_id" ref="account.tax_group_tva"/>
+            <field name="l10n_ma_tax_rate">7.0</field>
+            <field name="l10n_ma_valid_from">2020-01-01</field>
+            <field name="l10n_ma_valid_to">2025-12-31</field>
+        </record>
+        
+        <!-- Taux 14% - Ancien taux (transition) -->
+        <record id="vat_tax_14" model="account.tax">
+            <field name="name">TVA 14%</field>
+            <field name="amount">14.0</field>
+            <field name="type_tax_use">sale</field>
+            <field name="tax_group_id" ref="account.tax_group_tva"/>
+            <field name="l10n_ma_tax_rate">14.0</field>
+            <field name="l10n_ma_valid_from">2020-01-01</field>
+            <field name="l10n_ma_valid_to">2025-12-31</field>
+        </record>
+    </data>
+</odoo>
+\end{lstlisting}

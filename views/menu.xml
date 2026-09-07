@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <menuitem
+        id="menu_vat_root"
+        name="Déclaration TVA Maroc"
+        sequence="10"
+    />
+
+    <menuitem
+        id="menu_vat_return"
+        name="Déclarations TVA"
+        parent="menu_vat_root"
+        action="action_vat_return"
+        sequence="10"
+    />
+
+    <menuitem
+        id="menu_vat_history"
+        name="Historique"
+        parent="menu_vat_root"
+        sequence="20"
+    />
+
+
+    <menuitem
+        id="menu_vat_configuration"
+        name="Configuration"
+        parent="menu_vat_root"
+        sequence="30"
+    />
+
+</odoo>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_partner_form_inherit_vat" model="ir.ui.view">
+        <field name="name">res.partner.form.inherit.vat</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Ajout d'un nouvel onglet -->
+
+            <xpath expr="//notebook" position="inside">
+
+                <page string="Informations fiscales">
+
+                    <group>
+
+                        <group string="Identification fiscale">
+
+                            <field name="ice"/>
+
+                            <field name="if_number"/>
+
+                            <field name="rc"/>
+
+                            <field name="patent"/>
+
+                        </group>
+
+                        <group string="TVA">
+
+                            <field name="vat_regime"/>
+
+                            <field name="is_tax_exempt"/>
+
+                            <field name="simpl_reference"/>
+
+                        </group>
+
+                    </group>
+
+                    <group string="Attestation fiscale">
+
+                        <field name="tax_certificate"/>
+
+                        <field name="tax_certificate_expiry"/>
+
+                    </group>
+
+                </page>
+
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>

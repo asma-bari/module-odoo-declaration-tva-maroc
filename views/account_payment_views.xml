@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_account_payment_form_vat_simpl" model="ir.ui.view">
+        <field name="name">account.payment.form.vat.simpl</field>
+        <field name="model">account.payment</field>
+        <field name="inherit_id" ref="account.view_account_payment_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//sheet/group" position="after">
+
+                <group string="TVA Maroc">
+
+                    <field name="vat_return_id"/>
+
+                    <field name="vat_processed"/>
+
+                    <field name="payment_reference_dgi"/>
+
+                    <field name="payment_type_dgi"/>
+
+                </group>
+
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>
